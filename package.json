@@ -32,12 +32,12 @@
     "browser"
   ],
   "devDependencies": {
-    "mocha": "1.3.x",
-    "should": "1.0.x",
+    "mocha": "^3.5.0",
+    "should": "^11.2.1",
     "underscore": "1.2.3"
   },
   "scripts": {
-    "test": "mocha -r should -t 10000 -s 2000  test/clarinet.js test/npm.js test/utf8-chunks.js test/position.js"
+    "test": "mocha -w"
   },
   "engines": {
     "node": ">=0.3.6",

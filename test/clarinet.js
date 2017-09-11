@@ -1,4 +1,4 @@
-if (!clarinet) { // node 
+if (!clarinet) { // node
   var clarinet  = require('../clarinet.js')
     , _         = require('underscore')
     ;
