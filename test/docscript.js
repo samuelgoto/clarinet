@@ -70,7 +70,10 @@ class Parser {
   }
   onend() {
   }
-  parse(data) {
+  static parse(data) {
+    return new Parser().run(data);
+  }
+  run(data) {
     let root = {root: {}};
     this.stack = [root];
     this.key = "root";
@@ -84,14 +87,14 @@ class Parser {
 describe.only('docscript', function() {
   describe('basic', function() {
     it('simplest', function() {
-      let result = new Parser().parse(`{"foo": "bar"}`);
+      let result = Parser.parse(`{"foo": "bar"}`);
       assert.deepEqual(result, {
 	"foo": "bar"
       });
     });
 
     it('2 levels', function() {
-      let result = new Parser().parse(`{"foo": { "hello": "bar" } }`);
+      let result = Parser.parse(`{"foo": { "hello": "bar" } }`);
       assert.deepEqual(result, {
 	"foo": {
 	  "hello": "bar"
@@ -100,21 +103,21 @@ describe.only('docscript', function() {
     });
 
     it('arrays', function() {
-      let result = new Parser().parse(`{"a": [1, 2]}`);
+      let result = Parser.parse(`{"a": [1, 2]}`);
       assert.deepEqual(result, {
 	"a": [1, 2]
       });
     });
 
     it('arrays of objects', function() {
-      let result = new Parser().parse(`{"a": [{"b": 2}] }`);
+      let result = Parser.parse(`{"a": [{"b": 2}] }`);
       assert.deepEqual(result, {
 	"a": [{"b": 2}]
       });
     });
 
     it('popping', function() {
-      let result = new Parser().parse(`{
+      let result = Parser.parse(`{
         "a": {
           "b": "c"
         },
@@ -129,7 +132,7 @@ describe.only('docscript', function() {
     });
 
     it('complicated', function() {
-      let result = new Parser().parse(`{
+      let result = Parser.parse(`{
         "foo": "bar",
         "hello": "world",
         "children": {
@@ -142,7 +145,8 @@ describe.only('docscript', function() {
           "g": "h",
           "i": {
             "j": "k"
-          }
+          },
+          "foo": [1, 2, 3, {"bar": 1, "hey": [1, 2, 3]}]
         }
       }`);
       assert.deepEqual(result, {
@@ -158,7 +162,8 @@ describe.only('docscript', function() {
 	  g: "h",
 	  i: {
 	    j: "k"
-	  }
+	  },
+	  foo: [1, 2, 3, {bar: 1, hey: [1, 2, 3]}]
 	}
       });
     });
