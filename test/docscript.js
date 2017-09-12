@@ -5,8 +5,6 @@ var fs             = require('fs')
   , assert         = require('assert')
   ;
 
-// return;
-
 class Parser {
   constructor() {
     this.parser = clarinet.parser();
@@ -27,24 +25,13 @@ class Parser {
     console.log(`error ${e}`);
   };
   onvalue(value) {
-    // this.top[this.key] = value;
-    // this.top[this.key] = value;
     if (!this.top().array) {
       this.top().root[this.key] = value;
-      // this.current = value;
     } else {
-      //console.log("this is an array!!");
-      //console.log(`value ${this.key}=${value}: ${JSON.stringify(this.stack)}`);
-      //console.log(`${JSON.stringify(this.top().root)}`);
       this.top().root[this.key].push(value);
     }
-    // console.log(`value ${this.key}=${value}: ${JSON.stringify(this.stack)}`);
   }
   onopenobject(key) {
-    // this.top[this.key] = {};
-    // this.top = {};
-    // let obj = {};
-    // top()
     let obj = {
       root: {}
     };
@@ -53,65 +40,41 @@ class Parser {
       this.stack.push(obj);
     } else {
       // Else, we are recursevily opening a new object ...
-      // console.log("hello world");
       if (!this.top().array) {
 	this.top().root[this.key] = obj.root;
       } else {
 	this.top().root[this.key].push(obj.root);
       }
-      // this.current[key] = obj.root;
       this.stack.push(obj);
     }
 
-    // this.current = obj.root;
     this.key = key;
-    // this.top[this.key] = {};
-    // this.top = this.top[this.key];
-    // this.top =
     // console.log(`open ${key}: ${JSON.stringify(this.stack)}`);
   }
   onkey(key) {
     // console.log(`key ${key} on ${JSON.stringify(this.stack)}`);
     this.key = key;
-    // this.current = top()[key];
   }
   oncloseobject() {
     // console.log(`closeing ${JSON.stringify(this.stack)}`);
     let node = this.stack.pop();
-    // this.top()[node.key] = node.root;
-    // let tree = ;
-    // console.log(`${JSON.stringify(node)}`);
-    // for (let prop in node.root) {
-    //  this.top().root[prop] = node.root[prop];
-    // }
     // console.log(`closed ${JSON.stringify(this.stack)}`);
     // console.log(`closed ${JSON.stringify(this.current)}`);
   }
   onopenarray() {
     this.top().array = true;
     this.top().root[this.key] = [];
-    // console.log(`open array ${JSON.stringify(this.stack)}`);
-    // this.array = true;
   }
   onclosearray() {
-    // console.log(`close array`);
-    // this.array = false;
     this.top().array = false;
   }
   onend() {
-    // console.log(`end`);
   }
   parse(data) {
-    // this.root = {root: {}};
     let root = {root: {}};
-    // this.current = root;
     this.stack = [root];
     this.key = "root";
-    // this.current = this.root;
     this.parser.write(data).close();
-    // let result = this.root;
-    // console.log(this.root);
-    // console.log(result.root);
     let result = this.stack.pop().root.root;
     // console.log(JSON.stringify(result));
     return result;
@@ -150,7 +113,7 @@ describe.only('docscript', function() {
       });
     });
 
-   it('popping', function() {
+    it('popping', function() {
       let result = new Parser().parse(`{
         "a": {
           "b": "c"
@@ -173,7 +136,8 @@ describe.only('docscript', function() {
           "a": "b",
           "c": 1,
           "d": {
-            "e": "f"
+            "e": "f",
+            "foo": [1, 2, 3, {"bar": 1, "hey": [1, 2, 3]}]
           },
           "g": "h",
           "i": {
@@ -188,7 +152,8 @@ describe.only('docscript', function() {
 	  a: "b",
 	  c: 1,
 	  d: {
-	    e: "f"
+	    e: "f",
+	    foo: [1, 2, 3, {bar: 1, hey: [1, 2, 3]}]
 	  },
 	  g: "h",
 	  i: {
@@ -197,7 +162,5 @@ describe.only('docscript', function() {
 	}
       });
     });
-
-
   });
 });
